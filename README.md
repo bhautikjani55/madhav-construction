@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Madhav Construction — Invoice / Bill Management
 
-## Getting Started
+Next.js (App Router) + TypeScript + MongoDB (Mongoose) + Tailwind + React Hook Form + Zod.
 
-First, run the development server:
+No server-side PDF generation. No PDFs stored. Only structured invoice **data** in MongoDB.
+Invoice is rendered as a real HTML/React component (`InvoiceTemplate`) and downloaded via
+browser print (`window.print()` → Save as PDF) with A4 print CSS.
+
+> Note: no reference PDF file was found in `D:\avadh`, so the template was recreated from the
+> textual specification in the prompt (company header, TAX INVOICE title, customer/invoice meta,
+> product table SR/PRODUCT/HSN/QTY/RATE/GST%/AMOUNT, GSTIN-bank + tax summary, terms + signatory).
+
+## 1. Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # then edit MONGODB_URI
+# .env.local example:
+# MONGODB_URI=mongodb://127.0.0.1:27017/invoice-app
+# or Atlas:
+# MONGODB_URI=mongodb+srv://<user>:<pass>@cluster0.xxxxx.mongodb.net/invoice-app?retryWrites=true&w=majority
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 2. Run
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run dev     # http://localhost:3000
+npm run build   # production check (passes)
+npm start       # serve production build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 3. Flow
 
-## Learn More
+1. Dashboard `/` → stats + recent + Create Invoice
+2. `/invoices/new` → customer + date + dynamic items, live Subtotal/CGST/SGST/Total/Grand, Preview (same `InvoiceTemplate`), Save
+3. Save → `POST /api/invoices` → backend validates (Zod), generates `MC-0001…` atomically via `Counter`, snapshots seller from `src/lib/company.ts`, recalculates everything, stores in MongoDB → redirect `/invoices/[id]`
+4. `/invoices` → history, search (number/customer/mobile), pagination, View/Edit/Delete
+5. `/invoices/[id]` → `InvoiceTemplate` + [Back][Edit][Print / Download PDF] → `window.print()`, `@page A4`, `.no-print` hidden, only `.print-area` visible
+6. `/products` → product master (auto-fills invoice rows, invoices keep their own snapshot)
 
-To learn more about Next.js, take a look at the following resources:
+## 4. Key files
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `src/components/invoice/InvoiceTemplate.tsx` — A4 invoice, pure HTML/CSS, 210mm×297mm
+- `src/styles/invoice.css` — screen + `@media print`, `@page { size: A4; margin: 0 }`
+- `src/components/invoice/InvoiceForm.tsx` — RHF + Zod + live calc + preview
+- `src/models/{Invoice,Product,Counter}.ts` — Mongoose schemas
+- `src/lib/{mongodb,invoice-calculation,invoice-number,validation,company,format}.ts`
+- `src/app/api/{invoices,products,dashboard}/route.ts`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 5. Calculations (backend is source of truth)
 
-## Deploy on Vercel
+- `taxable = qty × rate`, `gstAmt = taxable × gst% / 100`, `lineTotal = taxable + gstAmt`
+- `subtotal = Σ taxable`, `totalGst = Σ gstAmt`, `cgst = totalGst/2`, `sgst = totalGst - cgst`
+- `bill = subtotal + totalGst`, `grand = round(bill)`
+- Table AMOUNT column shows taxable (so its sum = Sub Total, matching the reference example `10×500=5000`).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 6. Print / PDF
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- No Puppeteer/Playwright, no storage. Click **Print / Download PDF** → `window.print()`.
+- In dialog: Destination → Save as PDF, Layout → Portrait, Paper → A4, Margins → None, Background graphics → on.
+
+## 7. Company defaults
+
+Edit `src/lib/company.ts` (`COMPANY_INFO`, `DEFAULT_TERMS`, `INVOICE_NUMBER_PREFIX`). Old invoices keep their seller snapshot.
