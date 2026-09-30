@@ -1,6 +1,7 @@
 import Link from "next/link";
+import LogoutButton from "@/components/layout/LogoutButton";
 
-export default function Navbar() {
+export default function Navbar({ loggedIn }: { loggedIn: boolean }) {
   return (
     <header className="no-print border-b bg-slate-900 text-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
@@ -10,23 +11,26 @@ export default function Navbar() {
             Invoice Manager
           </span>
         </Link>
-        <nav className="flex items-center gap-1 text-sm">
-          <Link href="/" className="rounded px-3 py-1.5 hover:bg-slate-800">
-            Dashboard
-          </Link>
-          <Link href="/invoices" className="rounded px-3 py-1.5 hover:bg-slate-800">
-            Invoices
-          </Link>
-          <Link href="/products" className="rounded px-3 py-1.5 hover:bg-slate-800">
-            Products
-          </Link>
-          <Link
-            href="/invoices/new"
-            className="ml-1 rounded bg-amber-500 px-3 py-1.5 font-semibold text-slate-900 hover:bg-amber-400"
-          >
-            + New Invoice
-          </Link>
-        </nav>
+        {loggedIn && (
+          <nav className="flex items-center gap-1 text-sm">
+            <Link href="/" className="rounded px-3 py-1.5 hover:bg-slate-800">
+              Dashboard
+            </Link>
+            <Link href="/invoices" className="rounded px-3 py-1.5 hover:bg-slate-800">
+              Invoices
+            </Link>
+            <Link href="/products" className="rounded px-3 py-1.5 hover:bg-slate-800">
+              Products
+            </Link>
+            <Link
+              href="/invoices/new"
+              className="ml-1 rounded bg-amber-500 px-3 py-1.5 font-semibold text-slate-900 hover:bg-amber-400"
+            >
+              + New Invoice
+            </Link>
+            <LogoutButton />
+          </nav>
+        )}
       </div>
     </header>
   );

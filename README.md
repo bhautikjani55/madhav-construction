@@ -21,7 +21,16 @@ cp .env.example .env.local   # then edit MONGODB_URI
 # MONGODB_URI=mongodb+srv://<user>:<pass>@cluster0.xxxxx.mongodb.net/invoice-app?retryWrites=true&w=majority
 ```
 
-## 2. Run
+## 2. Login (no signup)
+
+Single user from env (`ADMIN_USER` / `ADMIN_PASSWORD` in `.env.local`, defaults
+`admin` / `admin123`). Open the app → redirected to `/login` → session cookie
+(`mc_session`, 7 days, httpOnly) guards all pages and `/api/*` via
+`src/proxy.ts` (Next 16 convention). Logout via the navbar button. After changing
+`.env.local` or auth files, restart the server (`npm run dev` / `npm start`) —
+a stale `next start` process will keep serving the old unprotected build.
+
+## 3. Run
 
 ```bash
 npm run dev     # http://localhost:3000
