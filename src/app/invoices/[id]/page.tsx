@@ -3,6 +3,7 @@
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import InvoiceTemplate from "@/components/invoice/InvoiceTemplate";
+import ScaledSheet from "@/components/invoice/ScaledSheet";
 import type { InvoiceDTO } from "@/types/invoice";
 
 export default function InvoiceDetailPage({
@@ -54,12 +55,14 @@ export default function InvoiceDetailPage({
           🖨 Print / Download PDF
         </button>
         <span className="text-xs text-slate-500">
-          In print dialog choose “Save as PDF”, A4 portrait, margins None.
+          In print dialog choose “Save as PDF”, A4 portrait, margins Default.
         </span>
       </div>
 
-      <div className="print-area overflow-x-auto bg-slate-200 p-4">
-        <InvoiceTemplate invoice={invoice} />
+      <div className="print-area overflow-x-auto bg-slate-300 p-3 sm:p-10">
+        <ScaledSheet>
+          <InvoiceTemplate invoice={invoice} />
+        </ScaledSheet>
       </div>
     </div>
   );

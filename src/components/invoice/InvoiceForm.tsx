@@ -13,7 +13,20 @@ import { calculateInvoiceTotals, round2 } from "@/lib/invoice-calculation";
 import { COMPANY_INFO, DEFAULT_TERMS } from "@/lib/company";
 import { formatINR, formatDateInput } from "@/lib/format";
 import InvoiceTemplate from "@/components/invoice/InvoiceTemplate";
+import ScaledSheet from "@/components/invoice/ScaledSheet";
 import type { InvoiceDTO, ProductDTO } from "@/types/invoice";
+
+function useIsMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const q = window.matchMedia("(max-width: 767px)");
+    const fn = () => setMobile(q.matches);
+    fn();
+    q.addEventListener("change", fn);
+    return () => q.removeEventListener("change", fn);
+  }, []);
+  return mobile;
+}
 
 type Props =
   | { mode: "create" }
@@ -52,6 +65,8 @@ export default function InvoiceForm(props: Props) {
   });
 
   const { fields, append, remove } = useFieldArray({ control, name: "items" });
+
+  const isMobile = useIsMobile();
 
   const watchedItems = useWatch({ control, name: "items" });
   const watchedCustomer = useWatch({ control, name: "customer" });
@@ -261,6 +276,95 @@ export default function InvoiceForm(props: Props) {
           </button>
         </div>
 
+        {/* Mobile: stacked product cards */}
+        {isMobile ? (
+          <div className="space-y-3">
+            {fields.map((f, i) => {
+              const qty = Number(watchedItems?.[i]?.quantity) || 0;
+              const rate = Number(watchedItems?.[i]?.rate) || 0;
+              const amt = round2(qty * rate);
+              return (
+                <div key={f.id} className="rounded-lg border bg-slate-50 p-3">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="font-bold">Item {i + 1}</span>
+                    <button
+                      type="button"
+                      disabled={fields.length <= 1}
+                      onClick={() => remove(i)}
+                      className="rounded bg-red-100 px-2 py-1 text-sm text-red-700 hover:bg-red-200 disabled:opacity-40"
+                    >
+                      ✕ Remove
+                    </button>
+                  </div>
+                  <select
+                    className="mb-2 w-full rounded border bg-white px-2 py-2 text-sm"
+                    defaultValue=""
+                    onChange={(e) => applyProduct(i, e.target.value)}
+                  >
+                    <option value="">— Select saved product —</option>
+                    {products.map((p) => (
+                      <option key={p._id} value={p._id}>
+                        {p.name} • ₹{p.defaultRate} • {p.gstPercentage}%
+                      </option>
+                    ))}
+                  </select>
+                  <label className="text-xs font-medium text-slate-600">Product name *</label>
+                  <input
+                    {...register(`items.${i}.productName`)}
+                    className="mb-2 mt-0.5 w-full rounded border bg-white px-3 py-2"
+                    placeholder="Product name"
+                  />
+                  {errors.items?.[i]?.productName && (
+                    <p className="mb-1 text-xs text-red-600">
+                      {errors.items[i]?.productName?.message}
+                    </p>
+                  )}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="text-xs font-medium text-slate-600">HSN/SAC</label>
+                      <input
+                        {...register(`items.${i}.hsnSac`)}
+                        className="mt-0.5 w-full rounded border bg-white px-3 py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-slate-600">Qty *</label>
+                      <input
+                        type="number"
+                        step="any"
+                        min="0"
+                        {...register(`items.${i}.quantity`)}
+                        className="mt-0.5 w-full rounded border bg-white px-3 py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-slate-600">Rate *</label>
+                      <input
+                        type="number"
+                        step="any"
+                        min="0"
+                        {...register(`items.${i}.rate`)}
+                        className="mt-0.5 w-full rounded border bg-white px-3 py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-slate-600">GST% *</label>
+                      <input
+                        type="number"
+                        step="any"
+                        min="0"
+                        max="100"
+                        {...register(`items.${i}.gstPercentage`)}
+                        className="mt-0.5 w-full rounded border bg-white px-3 py-2"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-2 text-right font-bold">{formatINR(amt)}</div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px] border-collapse text-sm">
             <thead>
@@ -360,6 +464,7 @@ export default function InvoiceForm(props: Props) {
             </tbody>
           </table>
         </div>
+        )}
         {errors.items && (
           <p className="mt-2 text-xs text-red-600">{String(errors.items.message ?? "Check items")}</p>
         )}
@@ -401,10 +506,12 @@ export default function InvoiceForm(props: Props) {
       </div>
 
       {showPreview && (
-        <section className="rounded-lg border bg-slate-100 p-4">
+        <section className="rounded-lg border bg-slate-100 p-3 sm:p-4">
           <h2 className="mb-2 font-bold">Preview (same template as saved invoice)</h2>
-          <div className="overflow-x-auto bg-slate-200 p-4">
-            <InvoiceTemplate invoice={previewInvoice} />
+          <div className="overflow-x-auto bg-slate-300 p-3 sm:p-6">
+            <ScaledSheet>
+              <InvoiceTemplate invoice={previewInvoice} />
+            </ScaledSheet>
           </div>
         </section>
       )}

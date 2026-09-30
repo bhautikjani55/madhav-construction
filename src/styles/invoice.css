@@ -2,13 +2,20 @@
 
 @page {
   size: A4 portrait;
-  margin: 0;
+  margin: 10mm;
 }
 
+/*
+ * A4 page = 210 x 297mm. With 10mm page margins the printable area is
+ * 190 x 277mm, so the invoice box is exactly that size and blank page
+ * space remains outside its border. The sheet is a flex column with the
+ * footer pushed to the bottom (margin-top: auto), so there is never a
+ * blank gap below the Terms & Condition box.
+ */
 .invoice-sheet.mc {
-  width: 210mm;
-  min-height: 297mm;
-  max-width: 210mm;
+  width: 190mm;
+  max-width: 190mm;
+  min-height: 277mm;
   margin: 0 auto;
   background: #fff;
   color: #000;
@@ -17,6 +24,9 @@
   line-height: 1.35;
   border: 3px solid #000;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
@@ -133,7 +143,7 @@
 .mc-items td.left { text-align: left; }
 .mc-items td.num { text-align: right; font-variant-numeric: tabular-nums; }
 .mc-items tr.mc-data-row td { border-bottom: 1px solid #000; }
-.mc-items tr.mc-fill-row td { height: 27px; }
+.mc-items tr.mc-fill-row td { height: 24px; }
 .mc-items tr.mc-fill-row:last-child td { border-bottom: none; }
 
 .w-sr { width: 9%; }
@@ -203,10 +213,12 @@
   justify-content: flex-end;
 }
 
-/* ---------- Footer ---------- */
+/* ---------- Footer (pinned to bottom of the A4 sheet) ---------- */
 .mc-foot {
   display: flex;
-  min-height: 148px;
+  min-height: 118px;
+  margin-top: auto;
+  border-top: 2px solid #000;
 }
 .mc-foot-left { width: 58%; padding: 6px 8px; }
 .mc-terms-lb { font-size: 12.5px; }
@@ -217,7 +229,7 @@
 }
 .mc-foot-right {
   width: 42%;
-  padding: 6px 10px 8px;
+  padding: 6px 10px 4px;
   display: flex;
   flex-direction: column;
   text-align: right;
@@ -226,36 +238,45 @@
 .mc-sign {
   margin-top: auto;
   font-size: 11.5px;
-  padding-top: 40px;
+  padding-top: 24px;
 }
 
-/* ---------- Screen preview ---------- */
+/* ---------- Screen preview: A4 page with shadow ---------- */
+@media screen {
+  .invoice-sheet.mc {
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.25);
+  }
+}
+/* Phones: the sheet keeps its A4 proportions and is scaled to fit
+   by the ScaledSheet component — never squashed. */
 @media screen and (max-width: 820px) {
-  .invoice-sheet.mc { width: 100%; max-width: 100%; }
   .mc-name { font-size: 22px; }
 }
 
-/* ---------- Print: invoice only ---------- */
+/* ---------- Print: invoice only, blank page margins outside the border ---------- */
 @media print {
   body { margin: 0 !important; background: #fff !important; }
   body * { visibility: hidden; }
   .print-area, .print-area * { visibility: visible; }
   .print-area {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 210mm;
+    position: static;
+    width: auto;
     margin: 0;
     padding: 0;
+    background: #fff !important;
   }
   .no-print { display: none !important; }
   .invoice-sheet.mc {
     border: 3px solid #000;
-    margin: 0;
-    width: 210mm;
-    min-height: 296mm;
+    margin: 0 auto;
+    width: 190mm;
+    max-width: 190mm;
+    min-height: 277mm;
     box-shadow: none;
   }
+  /* Screen-only fit-to-width scaling must not affect print */
+  .invoice-scale { transform: none !important; }
+  .invoice-scale-box { height: auto !important; }
   .mc-tax, .mc-cust-right, .mc-items th, .mc-gray {
     background: #d9d9d9 !important;
   }
