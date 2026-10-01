@@ -12,14 +12,15 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const token = (await cookies()).get("mc_session")?.value;
   const loggedIn = (await verifySession(token)) !== null;
+  const year = new Date().getFullYear();
 
   return (
     <html lang="en" className="h-full">
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col" suppressHydrationWarning>
         <Navbar loggedIn={loggedIn} />
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">{children}</main>
         <footer className="no-print border-t bg-white py-3 text-center text-xs text-slate-500">
-          Madhav Construction • Invoices stored as data in MongoDB • Print via browser (Save as PDF)
+          © {year} Madhav Construction. All rights reserved.
         </footer>
       </body>
     </html>
