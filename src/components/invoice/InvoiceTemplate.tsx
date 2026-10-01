@@ -3,7 +3,10 @@ import { amountInWords, formatDate } from "@/lib/format";
 
 function fmt(n: number): string {
   const v = Number(n) || 0;
-  return v.toFixed(2);
+  return new Intl.NumberFormat("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(v);
 }
 
 /** Blank rows so the items area stays tall like the reference bill (single A4 page) */
