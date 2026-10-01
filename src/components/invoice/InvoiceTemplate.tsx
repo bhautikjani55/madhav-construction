@@ -168,7 +168,7 @@ export default function InvoiceTemplate({ invoice }: { invoice: InvoiceDTO }) {
           </div>
         </div>
 
-        {/* Total GST + Grand Total label */}
+        {/* Total GST + Grand Total + value on same row */}
         <div className="mc-sum-row">
           <div className="mc-sum-left">
             <span className="mc-bank-lb sm">Total GST</span>
@@ -177,18 +177,18 @@ export default function InvoiceTemplate({ invoice }: { invoice: InvoiceDTO }) {
           </div>
           <div className="mc-sum-right mc-gray mc-b">
             <span>Grand Total</span>
-            <span className="mc-num" />
+            <span className="mc-num">{fmt(invoice.grandTotal)}</span>
           </div>
         </div>
 
-        {/* Bill Amount + Grand value */}
+        {/* Bill Amount */}
         <div className="mc-sum-row">
           <div className="mc-sum-left">
             <span className="mc-bank-lb sm">Bill Amount</span>
             <span className="mc-colon">:</span>
             <span className="mc-words-val">{amountInWords(invoice.grandTotal)}</span>
           </div>
-          <div className="mc-sum-right mc-grand-val">{fmt(invoice.grandTotal)}</div>
+          <div className="mc-sum-right">&nbsp;</div>
         </div>
       </div>
 
