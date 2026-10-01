@@ -50,7 +50,7 @@ export default function InvoicesPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="flex min-h-[calc(100vh-220px)] flex-col space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-extrabold">Invoice History ({total})</h1>
         <Link
@@ -132,7 +132,7 @@ export default function InvoicesPage() {
         </table>
       </div>
 
-      <div className="flex items-center gap-2 text-sm">
+      <div className="sticky bottom-0 mt-auto flex items-center gap-2 bg-[var(--background)] py-3 text-sm">
         <button
           disabled={page <= 1}
           onClick={() => load(page - 1, search)}
