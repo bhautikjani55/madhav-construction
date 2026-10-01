@@ -1,5 +1,5 @@
 import type { InvoiceDTO } from "@/types/invoice";
-import { formatDate } from "@/lib/format";
+import { amountInWords, formatDate } from "@/lib/format";
 
 function fmt(n: number): string {
   const v = Number(n) || 0;
@@ -210,7 +210,7 @@ export default function InvoiceTemplate({ invoice }: { invoice: InvoiceDTO }) {
           <div className="mc-sum-left">
             <span className="mc-bank-lb sm">Total GST</span>
             <span className="mc-colon">:</span>
-            <span className="mc-num">{fmt(invoice.totalGst)}</span>
+            <span className="mc-words-val">{amountInWords(invoice.totalGst)}</span>
           </div>
           <div className="mc-sum-right mc-gray mc-b">
             <span>Grand Total</span>
@@ -223,7 +223,7 @@ export default function InvoiceTemplate({ invoice }: { invoice: InvoiceDTO }) {
           <div className="mc-sum-left">
             <span className="mc-bank-lb sm">Bill Amount</span>
             <span className="mc-colon">:</span>
-            <span className="mc-num">{fmt(invoice.billAmount)}</span>
+            <span className="mc-words-val">{amountInWords(invoice.grandTotal)}</span>
           </div>
           <div className="mc-sum-right mc-grand-val">{fmt(invoice.grandTotal)}</div>
         </div>

@@ -161,7 +161,7 @@
 .mc-items td.left { text-align: left; }
 .mc-items td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .mc-items tr.mc-data-row td { border-bottom: 1px solid #000; height: 30px; }
-.mc-items tr.mc-fill-row td { height: 34px; padding: 0 5px; }
+.mc-items tr.mc-fill-row td { height: 31px; padding: 0 5px; }
 .mc-items tr.mc-fill-row:last-child td { border-bottom: none; }
 
 .c-sr { width: 8%; }
@@ -234,6 +234,14 @@
   font-weight: 900;
   font-size: 16px;
   justify-content: flex-end;
+}
+/* Amount in words inside Total GST / Bill Amount rows */
+.mc-words-val {
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 /* ---------- Footer : compact, fixed height — free space stays in product table above ---------- */
