@@ -55,7 +55,8 @@ export default function InvoiceDetailPage({
           🖨 Print / Download PDF
         </button>
         <span className="text-xs text-slate-500">
-          In print dialog choose “Save as PDF”, A4 portrait, margins Default.
+          In print dialog choose “Save as PDF”, A4 portrait, Margins Default,
+          disable “Headers and footers”, enable “Background graphics”.
         </span>
       </div>
 
