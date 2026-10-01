@@ -12,45 +12,8 @@ const MIN_BODY_ROWS = 15;
 function Logo() {
   return (
     <div className="mc-logo">
-      <svg viewBox="0 0 120 62" className="mc-logo-svg" aria-hidden="true">
-        <g>
-          <rect x="34" y="14" width="10" height="26" fill="#1a3a8f" />
-          <rect x="46" y="6" width="12" height="34" fill="#2f6fd0" />
-          <rect x="60" y="12" width="10" height="28" fill="#1a3a8f" />
-          <rect x="72" y="18" width="9" height="22" fill="#2f6fd0" />
-          <g fill="#cfe3ff">
-            <rect x="48" y="10" width="3" height="3" />
-            <rect x="52" y="10" width="3" height="3" />
-            <rect x="48" y="15" width="3" height="3" />
-            <rect x="52" y="15" width="3" height="3" />
-            <rect x="48" y="20" width="3" height="3" />
-            <rect x="52" y="20" width="3" height="3" />
-          </g>
-          <path
-            d="M18 42 Q45 34 60 40 Q80 46 102 38 Q84 50 58 48 Q34 46 18 42 Z"
-            fill="#2f6fd0"
-          />
-          <path
-            d="M22 46 Q50 42 78 45"
-            stroke="#1a3a8f"
-            strokeWidth="1.6"
-            fill="none"
-          />
-        </g>
-        <text
-          x="60"
-          y="58"
-          textAnchor="middle"
-          fontFamily="Arial, Helvetica, sans-serif"
-          fontWeight="900"
-          fontSize="14"
-          fill="#0b2a6b"
-          letterSpacing="0.5"
-        >
-          MADHAV
-        </text>
-      </svg>
-      <div className="mc-logo-sub">— CONSTRUCTION —</div>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/madhav-logo.jpeg" alt="Madhav Construction" className="mc-logo-img" />
     </div>
   );
 }
