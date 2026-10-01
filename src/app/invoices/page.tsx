@@ -107,9 +107,15 @@ export default function InvoicesPage() {
                     <div className="flex gap-1">
                       <Link
                         href={`/invoices/${r._id}`}
-                        className="rounded bg-blue-100 px-2 py-1 text-blue-800 hover:bg-blue-200"
+                        className="hidden rounded bg-blue-100 px-2 py-1 text-blue-800 hover:bg-blue-200 md:inline-block"
                       >
                         View
+                      </Link>
+                      <Link
+                        href={`/invoices/${r._id}?print=1`}
+                        className="rounded bg-slate-900 px-2 py-1 text-white hover:bg-slate-700 md:hidden"
+                      >
+                        🖨 Print
                       </Link>
                       <Link
                         href={`/invoices/${r._id}/edit`}

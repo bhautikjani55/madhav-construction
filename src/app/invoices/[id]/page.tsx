@@ -25,6 +25,15 @@ export default function InvoiceDetailPage({
       .catch(() => setError("Failed to load invoice"));
   }, [id]);
 
+  // Auto-print when opened via mobile list Print button (?print=1)
+  useEffect(() => {
+    if (!invoice) return;
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("print") === "1") {
+      const t = setTimeout(() => window.print(), 600);
+      return () => clearTimeout(t);
+    }
+  }, [invoice]);
+
   if (error) {
     return (
       <div className="space-y-4">
@@ -60,7 +69,7 @@ export default function InvoiceDetailPage({
         </span>
       </div>
 
-      <div className="print-area overflow-x-auto bg-slate-300 p-3 sm:p-10">
+      <div className="print-area hidden overflow-x-auto bg-slate-300 p-3 sm:p-10 md:block print:block">
         <ScaledSheet>
           <InvoiceTemplate invoice={invoice} />
         </ScaledSheet>
