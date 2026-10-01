@@ -52,14 +52,10 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-lg border bg-white p-4 shadow-sm">
           <div className="text-sm text-slate-500">Total Invoices</div>
           <div className="text-3xl font-extrabold">{loading ? "…" : stats.totalInvoices}</div>
-        </div>
-        <div className="rounded-lg border bg-white p-4 shadow-sm">
-          <div className="text-sm text-slate-500">Total Invoice Amount</div>
-          <div className="text-3xl font-extrabold">{loading ? "…" : formatINR(stats.totalAmount)}</div>
         </div>
         <div className="rounded-lg border bg-white p-4 shadow-sm">
           <div className="text-sm text-slate-500">Business</div>
